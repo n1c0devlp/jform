@@ -11,7 +11,7 @@ if (!process.env.NEXTAUTH_SECRET) {
   throw new Error('NEXTAUTH_SECRET must be set');
 }
 
-export const authOptions: NextAuthOptions = {
+const options: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
@@ -78,24 +78,19 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Si l'URL est déjà une URL complète et commence par le baseUrl
       if (url.startsWith(baseUrl)) {
         const path = url.substring(baseUrl.length);
-        // Éviter les boucles de redirection vers la page de connexion
         if (path.startsWith('/auth/login')) {
           return `${baseUrl}/teacher/dashboard`;
         }
         return url;
       }
-      // Si c'est un chemin relatif
       if (url.startsWith('/')) {
-        // Éviter les boucles de redirection vers la page de connexion
         if (url.startsWith('/auth/login')) {
           return `${baseUrl}/teacher/dashboard`;
         }
         return `${baseUrl}${url}`;
       }
-      // Pour toute autre URL, rediriger vers le tableau de bord
       return `${baseUrl}/teacher/dashboard`;
     }
   },
@@ -105,5 +100,5 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(options);
 export { handler as GET, handler as POST }; 

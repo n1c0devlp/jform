@@ -27,7 +27,7 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: () => true, // On gère l'autorisation dans le middleware
+      authorized: () => true,
     },
   }
 );
