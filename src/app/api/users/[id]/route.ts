@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -7,9 +7,9 @@ import { hash } from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+  request: NextRequest,
+  context: { params: { id: string } }
+): Promise<Response> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -31,7 +31,7 @@ export async function PATCH(
     if (lastName !== undefined) updateData.lastName = lastName;
 
     const user = await prisma.user.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: updateData,
       select: {
         id: true,

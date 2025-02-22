@@ -1,9 +1,28 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const testStudents = [
+interface TestStudent {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date;
+  instrument: string;
+  secondaryInstrument: string | null;
+  level: string;
+  teacher: string;
+  phone: string;
+  email: string;
+  role: Role;
+  isActive: boolean;
+  availabilities: Array<{
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+  }>;
+}
+
+const testStudents: TestStudent[] = [
   {
     firstName: 'Marie',
     lastName: 'Dubois',
@@ -13,34 +32,30 @@ const testStudents = [
     level: '3CD1',
     teacher: 'J. MEUNIER',
     phone: '06 12 34 56 78',
-    email: 'marie.dubois@example.com',
+    email: 'marie.dubois@test.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Lucas',
     lastName: 'Martin',
-    dateOfBirth: new Date('2007-06-22'),
+    dateOfBirth: new Date('2007-07-22'),
     instrument: 'Alto',
     secondaryInstrument: null,
     level: '3CD2',
     teacher: 'F. VOGHT',
     phone: '06 23 45 67 89',
-    email: 'lucas.martin@example.com',
+    email: 'lucas.martin@test.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '17:00', endTime: '18:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '17:00', endTime: '18:00' },
+    ],
   },
   {
     firstName: 'Emma',
@@ -54,12 +69,10 @@ const testStudents = [
     email: 'emma.bernard@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Thomas',
@@ -73,12 +86,10 @@ const testStudents = [
     email: 'thomas.petit@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Léa',
@@ -92,12 +103,10 @@ const testStudents = [
     email: 'lea.roux@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   // Nouveaux élèves
   {
@@ -112,12 +121,10 @@ const testStudents = [
     email: 'antoine.moreau@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Sarah',
@@ -131,12 +138,10 @@ const testStudents = [
     email: 'sarah.lambert@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Hugo',
@@ -150,12 +155,10 @@ const testStudents = [
     email: 'hugo.girard@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Camille',
@@ -169,12 +172,10 @@ const testStudents = [
     email: 'camille.leroy@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Louis',
@@ -188,12 +189,10 @@ const testStudents = [
     email: 'louis.fournier@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Chloé',
@@ -207,12 +206,10 @@ const testStudents = [
     email: 'chloe.dupuis@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Gabriel',
@@ -226,12 +223,10 @@ const testStudents = [
     email: 'gabriel.mercier@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Inès',
@@ -245,12 +240,10 @@ const testStudents = [
     email: 'ines.bonnet@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Nathan',
@@ -264,12 +257,10 @@ const testStudents = [
     email: 'nathan.rousseau@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Manon',
@@ -283,12 +274,10 @@ const testStudents = [
     email: 'manon.laurent@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Arthur',
@@ -302,12 +291,10 @@ const testStudents = [
     email: 'arthur.simon@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Zoé',
@@ -321,12 +308,10 @@ const testStudents = [
     email: 'zoe.michel@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Maxime',
@@ -340,12 +325,10 @@ const testStudents = [
     email: 'maxime.lefebvre@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Alice',
@@ -359,12 +342,10 @@ const testStudents = [
     email: 'alice.morel@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Paul',
@@ -378,12 +359,10 @@ const testStudents = [
     email: 'paul.bertrand@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Eva',
@@ -397,12 +376,10 @@ const testStudents = [
     email: 'eva.garnier@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Jules',
@@ -416,12 +393,10 @@ const testStudents = [
     email: 'jules.faure@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Lucie',
@@ -435,12 +410,10 @@ const testStudents = [
     email: 'lucie.andre@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Théo',
@@ -454,12 +427,10 @@ const testStudents = [
     email: 'theo.lemaire@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Nina',
@@ -473,12 +444,10 @@ const testStudents = [
     email: 'nina.legrand@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Adam',
@@ -492,12 +461,10 @@ const testStudents = [
     email: 'adam.roche@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Clara',
@@ -511,12 +478,10 @@ const testStudents = [
     email: 'clara.vincent@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Victor',
@@ -530,12 +495,10 @@ const testStudents = [
     email: 'victor.chevalier@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Léna',
@@ -549,12 +512,10 @@ const testStudents = [
     email: 'lena.marchand@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Robin',
@@ -568,12 +529,10 @@ const testStudents = [
     email: 'robin.dumont@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 5, startTime: '14:00', endTime: '15:00' },
+    ],
   },
   {
     firstName: 'Jade',
@@ -587,12 +546,10 @@ const testStudents = [
     email: 'jade.lefevre@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 4, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Raphaël',
@@ -606,12 +563,10 @@ const testStudents = [
     email: 'raphael.muller@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Louise',
@@ -625,12 +580,10 @@ const testStudents = [
     email: 'louise.blanchard@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 3, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Mathis',
@@ -644,12 +597,10 @@ const testStudents = [
     email: 'mathis.guerin@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
-        { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 2, startTime: '16:00', endTime: '17:00' },
+      { dayOfWeek: 5, startTime: '16:00', endTime: '17:00' },
+    ],
   },
   {
     firstName: 'Juliette',
@@ -663,12 +614,10 @@ const testStudents = [
     email: 'juliette.boyer@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
-        { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 3, startTime: '14:00', endTime: '15:00' },
+      { dayOfWeek: 5, startTime: '15:00', endTime: '16:00' },
+    ],
   },
   {
     firstName: 'Ethan',
@@ -682,38 +631,43 @@ const testStudents = [
     email: 'ethan.renard@example.com',
     role: 'STUDENT',
     isActive: true,
-    availabilities: {
-      create: [
-        { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
-        { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
-      ],
-    },
+    availabilities: [
+      { dayOfWeek: 1, startTime: '15:00', endTime: '16:00' },
+      { dayOfWeek: 4, startTime: '14:00', endTime: '15:00' },
+    ],
   },
 ];
 
 export async function POST() {
   try {
-    // Supprimer d'abord toutes les disponibilités existantes
-    await prisma.availability.deleteMany({
-      where: {
-        user: {
-          role: 'STUDENT'
-        }
-      }
-    });
-
-    // Supprimer ensuite tous les étudiants existants
+    // Supprimer d'abord toutes les disponibilités
+    await prisma.availability.deleteMany();
+    
+    // Puis supprimer tous les utilisateurs de type STUDENT
     await prisma.user.deleteMany({
       where: {
-        role: 'STUDENT'
-      }
+        role: 'STUDENT',
+      },
     });
 
-    // Créer les nouveaux étudiants avec leurs disponibilités
+    // Créer les nouveaux étudiants
     for (const student of testStudents) {
-      await prisma.user.create({
-        data: student,
+      const { availabilities, ...userData } = student;
+      
+      // Créer l'utilisateur
+      const user = await prisma.user.create({
+        data: userData,
       });
+
+      // Créer les disponibilités pour cet utilisateur
+      if (availabilities.length > 0) {
+        await prisma.availability.createMany({
+          data: availabilities.map(avail => ({
+            ...avail,
+            userId: user.id,
+          })),
+        });
+      }
     }
 
     return NextResponse.json({ message: 'Élèves de test ajoutés avec succès' });

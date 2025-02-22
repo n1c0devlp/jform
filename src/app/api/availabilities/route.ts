@@ -3,7 +3,14 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-interface AvailabilityWithUser {
+interface User {
+  firstName: string | null;
+  lastName: string | null;
+  instrument: string | null;
+  level: string | null;
+}
+
+interface Availability {
   id: string;
   userId: string;
   dayOfWeek: number;
@@ -11,12 +18,7 @@ interface AvailabilityWithUser {
   endTime: string;
   createdAt: Date;
   updatedAt: Date;
-  user: {
-    firstName: string;
-    lastName: string;
-    instrument: string;
-    level: string;
-  };
+  user: User;
 }
 
 export async function GET() {
@@ -38,12 +40,12 @@ export async function GET() {
     });
 
     // Transformer les données pour inclure les informations de l'utilisateur directement
-    const formattedAvailabilities = availabilities.map((availability: AvailabilityWithUser) => ({
+    const formattedAvailabilities = availabilities.map((availability: Availability) => ({
       id: availability.id,
-      firstName: availability.user.firstName,
-      lastName: availability.user.lastName,
-      instrument: availability.user.instrument,
-      level: availability.user.level,
+      firstName: availability.user.firstName || '',
+      lastName: availability.user.lastName || '',
+      instrument: availability.user.instrument || '',
+      level: availability.user.level || '',
       dayOfWeek: availability.dayOfWeek,
       startTime: availability.startTime,
       endTime: availability.endTime,

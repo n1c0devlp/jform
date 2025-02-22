@@ -13,7 +13,6 @@ export async function POST(request: Request) {
       update: {
         firstName: studentInfo.firstName,
         lastName: studentInfo.lastName,
-        age: studentInfo.age,
         instrument: studentInfo.instrument,
         secondaryInstrument: studentInfo.secondaryInstrument,
         level: studentInfo.level,
@@ -24,7 +23,6 @@ export async function POST(request: Request) {
         email: studentInfo.email,
         firstName: studentInfo.firstName,
         lastName: studentInfo.lastName,
-        age: studentInfo.age,
         instrument: studentInfo.instrument,
         secondaryInstrument: studentInfo.secondaryInstrument,
         level: studentInfo.level,
@@ -60,5 +58,7 @@ export async function POST(request: Request) {
       { error: 'Erreur lors de l\'enregistrement des informations' },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 } 

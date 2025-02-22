@@ -5,6 +5,12 @@ import { authOptions } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
+export const dynamic = 'force-dynamic';
+
+interface Distribution {
+  [key: string]: number;
+}
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -27,7 +33,7 @@ export async function GET() {
       },
     });
 
-    const usersByRole = users.reduce((acc, user) => {
+    const usersByRole = users.reduce((acc: Distribution, user) => {
       acc[user.role] = (acc[user.role] || 0) + 1;
       return acc;
     }, {
@@ -40,7 +46,7 @@ export async function GET() {
     const activeUsers = users.filter(user => user.isActive).length;
 
     // Distribution des instruments
-    const instrumentDistribution = users.reduce((acc, user) => {
+    const instrumentDistribution = users.reduce((acc: Distribution, user) => {
       if (user.instrument) {
         acc[user.instrument] = (acc[user.instrument] || 0) + 1;
       }
@@ -48,7 +54,7 @@ export async function GET() {
     }, {});
 
     // Distribution des niveaux
-    const levelDistribution = users.reduce((acc, user) => {
+    const levelDistribution = users.reduce((acc: Distribution, user) => {
       if (user.level) {
         acc[user.level] = (acc[user.level] || 0) + 1;
       }

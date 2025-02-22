@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -6,9 +6,9 @@ import { authOptions } from '@/lib/auth';
 const prisma = new PrismaClient();
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+  request: NextRequest,
+  context: { params: { id: string } }
+): Promise<Response> {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'TEACHER') {
@@ -17,7 +17,7 @@ export async function PATCH(
 
     const data = await request.json();
     const updatedUser = await prisma.user.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
