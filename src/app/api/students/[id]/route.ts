@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -11,21 +11,13 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
-    // Vérifier si l'utilisateur est connecté et a les droits nécessaires
-    if (!session?.user || !['ADMIN', 'SUPER_ADMIN'].includes(session.user.role as string)) {
-      return NextResponse.json(
-        { error: 'Non autorisé' },
-        { status: 403 }
-      );
+    if (!session || session.user.role !== 'TEACHER') {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
     }
 
     const data = await request.json();
-    const studentId = params.id;
-
-    // Mettre à jour l'élève
-    const updatedStudent = await prisma.user.update({
-      where: { id: studentId },
+    const updatedUser = await prisma.user.update({
+      where: { id: params.id },
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -40,8 +32,8 @@ export async function PATCH(
     });
 
     return NextResponse.json({
-      ...updatedStudent,
-      dateOfBirth: updatedStudent.dateOfBirth?.toISOString(),
+      ...updatedUser,
+      dateOfBirth: updatedUser.dateOfBirth?.toISOString(),
     });
   } catch (error) {
     console.error('Erreur lors de la mise à jour de l\'élève:', error);
